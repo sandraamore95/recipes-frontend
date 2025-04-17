@@ -1,0 +1,17 @@
+main {}
+
+.navbar-brand {
+  font-size: 1.5rem;
+}
+
+.nav-link {
+  font-size: 1.1rem;
+}
+
+.form-control[multiple] {
+  min-height: 120px;
+
+  option {
+    padding: 8px;
+  }
+}

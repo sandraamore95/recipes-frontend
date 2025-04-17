@@ -1,0 +1,20 @@
+.transition-all {
+    transition: all 0.3s ease;
+  }
+  .navbar {
+    padding: 0.8rem 0;
+  }
+  .dropdown-menu {
+    margin-top: 0.5rem;
+  }
+  @media (max-width: 991.98px) {
+    .navbar-collapse {
+      padding: 1rem 0;
+    }
+    .navbar-nav .btn {
+      margin-left: 0 !important;
+      margin-top: 0.5rem;
+      display: block;
+      width: 100%;
+    }
+  }

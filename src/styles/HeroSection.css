@@ -1,0 +1,21 @@
+
+/*SECCION HERO */
+.hero-span {
+    color: rgb(42 91 69);
+    font-size: 18px;
+    line-height: 24px;
+    font-weight: 600;
+  }
+  
+  .hero-title {
+    font-size: 40px;
+    line-height: 44px;
+    font-weight: 600;
+  }
+  
+  .hero-subtitle {
+    font-size: 14px;
+    line-height: 16px;
+    font-weight: 400;
+  }
+  
