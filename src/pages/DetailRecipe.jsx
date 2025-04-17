@@ -57,11 +57,9 @@ const DetailRecipe = () => {
         }
 
         if (isFavorite) {
-            console.log("vamos a desmarcar");
             await removeFavorite(recipeId); 
             setIsFavorite(false);
         } else {
-            console.log("vamos a añadir");
              await addFavorite(recipeId); 
              setIsFavorite(true);
         }

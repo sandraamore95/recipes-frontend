@@ -7,7 +7,8 @@ function Favorites() {
 
 
     useEffect(() => {
-       console.log(favorites);
+      console.log("estamos en componnete de favoritos con : ");
+       console.log(favorites); // favoritos es null 
     }, []);
 
 

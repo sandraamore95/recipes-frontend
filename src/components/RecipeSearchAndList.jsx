@@ -13,6 +13,8 @@ const RecipeSearchAndList = ({ recipes, viewType }) => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
+        console.log("estamos en cl omponente de searchandlist con el viewtype de " + viewType);
+        console.log("Recetas recibidas:", recipes);
         const fetchCategories = async () => {
             setLoading(true);
             try {

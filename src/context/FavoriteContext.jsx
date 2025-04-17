@@ -21,7 +21,7 @@ export const FavoriteProvider = ({ children }) => {
     try {
       setLoading(true);
       const data = await favoriteService.getUserFavorites(token);
-      setFavorites(data.map(fav => fav.recipe));
+      setFavorites(data.map(fav => fav.recipe)); //extraigo las recetas de cada favorito
     } catch (err) {
       console.error(err);
       setError("No se pudieron obtener los favoritos.");
@@ -33,7 +33,7 @@ export const FavoriteProvider = ({ children }) => {
   const addFavorite = async (recipeId) => {
     try {
       const newFav = await favoriteService.addFavorite(recipeId, token);
-      setFavorites((prev) => [...prev, newFav]);
+      setFavorites((prev) => [...prev, newFav.recipe]);
     } catch (err) {
       console.error(err);
     }
@@ -43,9 +43,7 @@ export const FavoriteProvider = ({ children }) => {
     console.log("vamos a desmarcar favoritos");
     try {
       await favoriteService.removeFavorite(recipeId, token);
-      setFavorites((prev) =>
-        prev.filter((fav) => fav.recipe && fav.recipe.id !== recipeId)
-      );
+      setFavorites((prev) => prev.filter((recipe) => recipe.id !== recipeId));
     } catch (err) {
       console.error(err);
     }

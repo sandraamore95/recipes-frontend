@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaEdit, FaTrash, FaHeartBroken, FaBookOpen } from 'react-icons/fa';
 import { toast } from 'react-toastify';
@@ -11,6 +11,11 @@ const RecipeCard = ({ recipe, viewType }) => {
   const { user, token } = useAuth();
   const { removeFavorite } = useFavorites();
   const { deleteRecipe, loading, error } = useRecipes();
+
+  
+  useEffect(() => {
+    console.log("estamos en el componente de recipecard");
+    }, []);
 
   const getActions = () => {
     switch (viewType) {
@@ -98,6 +103,7 @@ const RecipeCard = ({ recipe, viewType }) => {
 
           {getActions()}
         </div>
+        
 
         <div className="card-body d-flex flex-column">
           <h5 className="card-title fw-bold text-primary">{recipe.title}</h5>

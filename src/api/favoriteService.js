@@ -10,6 +10,7 @@ export const getUserFavorites = async (token) => {
         'Authorization': `Bearer ${token}`
       }
     });
+    console.log(response);
     return response.data;
   };
   
