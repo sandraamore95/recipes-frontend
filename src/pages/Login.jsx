@@ -1,32 +1,33 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const Login = () => {
     const { login } = useAuth();
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(false);
 
     const [credentials, setCredentials] = useState({
         username: "",
         password: "",
     });
 
-    const [error, setError] = useState("");
-
     const handleChange = (e) => {
         setCredentials({ ...credentials, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = async (e) => { console.log(credentials);
-      console.log("estamos qui");
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        setError("");
-
+        setLoading(true);
         try {
             await login(credentials.username, credentials.password);
-            navigate("/"); // Redirige a la home después del login
+            toast.success("Autenticación correcta");
+            navigate("/");
         } catch (err) {
-            setError("Usuario o contraseña incorrectos");
+            toast.error("Autenticación incorrecta");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -56,9 +57,12 @@ const Login = () => {
                         required
                     />
                 </div>
-                {error && <div className="alert alert-danger">{error}</div>}
-                <button type="submit" className="btn btn-primary w-100">
-                    Entrar
+                <button
+                    type="submit"
+                    className="btn btn-primary w-100"
+                    disabled={loading}
+                >
+                    {loading ? "Entrando..." : "Entrar"}
                 </button>
             </form>
         </div>

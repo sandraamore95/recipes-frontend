@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import RecipeSearchAndList from '../components/RecipeSearchAndList';
 import { useRecipes } from '../context/RecipeContext';
+import { Spinner } from 'react-bootstrap';
 
 function MyRecipes() {
   const { user } = useAuth();
@@ -16,8 +17,18 @@ function MyRecipes() {
     }
   }, [user, recipes]);
 
-  if (loading) return <p>Cargando...</p>;
-  if (error) return <p>Error: {error}</p>;
+  if (loading) {
+    return (
+      <div className="d-flex justify-content-center mt-3">
+        <Spinner animation="border" variant="primary" />
+        <p className="ms-2">Cargando...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return <p>Error: {error}</p>;
+  }
 
   return (
     <div className="container pt-5">

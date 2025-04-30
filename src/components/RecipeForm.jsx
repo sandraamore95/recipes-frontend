@@ -124,6 +124,7 @@ const RecipeForm = ({ initialData = {}, onSubmit }) => {
                                     id="description"
                                     placeholder="Descripción"
                                     rows={3}
+                                   required
                                 ></textarea>
                                 <label htmlFor="description">Descripción</label>
                             </div>

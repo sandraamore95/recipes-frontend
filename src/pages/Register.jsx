@@ -1,17 +1,18 @@
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const Register = () => {
+  const { register } = useAuth();
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+
   const [form, setForm] = useState({
     username: "",
     email: "",
     password: "",
   });
-
-  const { register, loading, error } = useAuth();
-  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -19,21 +20,21 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    setLoading(true);
     try {
       await register(form);
       toast.success("¡Usuario registrado correctamente!");
-      navigate("/login"); 
+      navigate("/login");
     } catch (err) {
-      toast.error(err.errorCode|| "Error al registrar el usuario.");
+      toast.error(err.errMsg);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="container">
+    <div className="container mt-5 pt-5">
       <h1 className="text-center">Registro 📝</h1>
-
-      {error && <div className="alert alert-danger">{error}</div>}
 
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
@@ -81,18 +82,19 @@ const Register = () => {
             onChange={handleChange}
             placeholder="Introduce tu contraseña"
             required
-            maxLength={6} 
+            maxLength={6}
           />
         </div>
 
-        <button
-          type="submit"
-          className="btn btn-primary"
-          disabled={loading}
-        >
+        <button type="submit" className="btn btn-primary" disabled={loading}>
           {loading ? "Registrando..." : "Registrarse"}
         </button>
       </form>
+      <div className="mt-3 text-center">
+        <Link to="/forgot-password" className="text-decoration-none">
+          ¿Olvidaste tu contraseña?
+        </Link>
+      </div>
     </div>
   );
 };

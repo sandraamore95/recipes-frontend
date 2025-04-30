@@ -3,12 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { FaEdit, FaTrash, FaHeartBroken, FaBookOpen } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import { useRecipes } from '../context/RecipeContext';
-import { useAuth } from '../context/AuthContext';
 import { useFavorites } from '../context/FavoriteContext';
 
 const RecipeCard = ({ recipe, viewType }) => {
   const navigate = useNavigate();
-  const { user, token } = useAuth();
   const { removeFavorite } = useFavorites();
   const { deleteRecipe, loading, error } = useRecipes();
 
@@ -31,7 +29,7 @@ const RecipeCard = ({ recipe, viewType }) => {
               <FaEdit />
             </button>
             < button
-              onClick={() => handleDelete(recipe.id, token)}
+              onClick={() => handleDelete(recipe.id)}
               className="btn btn-sm btn-icon rounded-circle bg-white text-danger shadow-sm"
               style={{ width: '32px', height: '32px' }}
               aria-label="Eliminar"
@@ -67,13 +65,12 @@ const RecipeCard = ({ recipe, viewType }) => {
     navigate(`/edit-recipe/${recipeId}`);
   };
 
-  const handleDelete = async (recipeId, token) => {
+  const handleDelete = async (recipeId) => {
     try {
-      await deleteRecipe(recipeId, token);
+      await deleteRecipe(recipeId);
       toast.success('Receta eliminada correctamente');
     } catch (error) {
-      const errorMsg = error.response?.data?.message || 'Error al eliminar la receta';
-      toast.error(errorMsg);
+      toast.error("Acceso Denegado");
     }
   }
 

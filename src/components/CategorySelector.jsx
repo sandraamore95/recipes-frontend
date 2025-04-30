@@ -6,7 +6,7 @@ const CategorySelector = ({ selectedCategories, onChange }) => {
 
     useEffect(() => {
         categoryService.getAllCategories()
-            .then((data) => setCategories(data))
+            .then((result) => setCategories(result.data))
             .catch((error) =>
                 console.error("Error al obtener categorías:", error)
             );

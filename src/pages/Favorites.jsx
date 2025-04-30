@@ -1,20 +1,27 @@
 import { useEffect } from "react";
 import RecipeSearchAndList from "../components/RecipeSearchAndList";
 import { useFavorites } from "../context/FavoriteContext";
+import { Spinner } from "react-bootstrap";
 
 function Favorites() {
-  const { favorites, loading, error } = useFavorites();
+  const { favorites, loading, error, getFavorites } = useFavorites();
 
+  useEffect(() => {
+    getFavorites();
+  }, []);
 
-    useEffect(() => {
-      console.log("estamos en componnete de favoritos con : ");
-       console.log(favorites); // favoritos es null 
-    }, []);
+  if (loading) {
+    return (
+      <div className="d-flex justify-content-center mt-3">
+        <Spinner animation="border" variant="primary" />
+        <p className="ms-2">Cargando...</p>
+      </div>
+    );
+  }
 
-
-
-  if (loading) return <p>Cargando...</p>;
-  if (error) return <p>Error: {error}</p>;
+  if (error) {
+    return <p>Error: {error}</p>;
+  }
 
   return (
     <div className="container pt-5">
@@ -27,4 +34,5 @@ function Favorites() {
       )}
     </div>
   );
-}export default Favorites;
+}
+export default Favorites;

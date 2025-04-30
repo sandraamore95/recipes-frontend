@@ -5,7 +5,6 @@ import { useState, useEffect } from 'react';
 import { FaUser, FaHeart, FaUtensils, FaSignOutAlt } from 'react-icons/fa';
 import { GiCookingPot } from 'react-icons/gi';
 import '../styles/Navbar.css';
-import { Alert } from 'react-bootstrap';
 
 const Navbar = () => {
     const { user, logout, isAuthenticated, loading, error } = useAuth();

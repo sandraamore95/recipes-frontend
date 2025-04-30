@@ -1,77 +1,97 @@
-import { jwtDecode } from 'jwt-decode';
-import axios from 'axios';
+import { jwtDecode } from "jwt-decode";
+import api from "./apiClient"; 
 
-const API_URL = 'http://localhost:8080/api/auth';
+const AUTH_URL = "/auth";
 
-// Login 
+
+// Login
 export const login = async (username, password) => {
   try {
-    const response = await axios.post(`${API_URL}/login`, {
+    const response = await api.post(`${AUTH_URL}/login`, {
       username,
-      password
-    }, {
-      headers: {
-        'Content-Type': 'application/json'
-      }
+      password,
     });
 
     if (!response.data.token) {
-      throw new Error('No se recibió token en la respuesta');
+      return { success: false, message: "Credenciales inválidas" };
     }
 
-    const decodedToken = jwtDecode(response.data.token);
+    let decodedToken;
+    try {
+      decodedToken = jwtDecode(response.data.token);
+    } catch (decodeError) {
+      return { success: false, message: "Token inválido" };
+    }
 
-    const userData = {
-      token: response.data.token,
-      tokenType: response.data.type,
-      user: {
-        id: response.data.id,
-        username: response.data.username,
-        email: response.data.email,
-        roles: response.data.roles
+    return {
+      success: true,
+      data: {
+        token: response.data.token,
+        user: {
+          id: response.data.id,
+          username: response.data.username,
+          email: response.data.email,
+          roles: response.data.roles,
+        },
+        tokenData: {
+          issuedAt: new Date(decodedToken.iat * 1000).toISOString(),
+          expiration: new Date(decodedToken.exp * 1000).toISOString(),
+          subject: decodedToken.sub,
+        },
       },
-      tokenData: {
-        issuedAt: new Date(decodedToken.iat * 1000).toISOString(),
-        expiration: new Date(decodedToken.exp * 1000).toISOString(),
-        subject: decodedToken.sub
-      }
     };
-
-    localStorage.setItem('token', userData.token);
-    localStorage.setItem('user', JSON.stringify(userData.user));
-    localStorage.setItem('tokenData', JSON.stringify(userData.tokenData));
-
-    return userData;
   } catch (error) {
-    console.error('Error en login:', error.response?.data || error.message);
-    throw new Error(error.response?.data?.message || 'Error de autenticación');
+    const errMsg = error.response?.data?.message || "Error al iniciar sesión";
+    return { success: false, message: errMsg };
   }
 };
 
-//register
-export const register = async ({ username, email, password}) => {
+// Register
+export const register = async ({ username, email, password }) => {
   try {
-    const response = await axios.post(`${API_URL}/register`, {
+    const response = await api.post(`${AUTH_URL}/register`, {
       username,
       email,
-      password
-    }, {
-      headers: {
-        'Content-Type': 'application/json'
-      }
+      password,
     });
-    return response.data;
+    return { success: true, data: response.data };
   } catch (error) {
-    console.error('Error en registro:', error.response?.data || error.message);
-    throw new Error(error.response?.data?.message || 'Error al registrar el usuario');
+    const errMsg =
+      error.response?.data?.message || "Error al registrar usuario";
+    return { success: false, errMsg };
   }
 };
 
-// Obtener usuario actual 
+// Forgot Password
+export const forgotPassword = async (email) => {
+  try {
+    const response = await api.post(`${AUTH_URL}/forgot-password`, { email });
+    return { success: true, data: response.data };
+  } catch (error) {
+    const errMsg = error.response?.data?.message;
+    return { success: false, errMsg };
+  }
+};
+
+// Reset Password
+export const resetPassword = async (token, newPassword) => {
+  try {
+    const response = await api.post(`${AUTH_URL}/reset-password`, {
+      token,
+      newPassword,
+    });
+    return { success: true, data: response.data };
+  } catch (error) {
+    const errMsg = error.response?.data?.message;
+    return { success: false, errMsg };
+  }
+};
+
+// Obtener usuario actual
 export const getCurrentUser = () => {
-  const user = JSON.parse(localStorage.getItem('user'));
-  const token = localStorage.getItem('token');
-  const tokenData = JSON.parse(localStorage.getItem('tokenData'));
+  const user = JSON.parse(localStorage.getItem("user"));
+  const token = localStorage.getItem("token");
+  const tokenData = JSON.parse(localStorage.getItem("tokenData"));
 
   if (!user || !token || !tokenData) return null;
 
@@ -84,15 +104,14 @@ export const getCurrentUser = () => {
   return user;
 };
 
-// Obtener token 
+// Obtener token
 export const getAuthToken = () => {
-  const token = localStorage.getItem('token');
-  return token ? token : null;
+  return localStorage.getItem("token") || null;
 };
 
-// Logout 
+// Logout
 export const logout = () => {
-  localStorage.removeItem('token');
-  localStorage.removeItem('user');
-  localStorage.removeItem('tokenData');
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+  localStorage.removeItem("tokenData");
 };

@@ -1,51 +1,75 @@
-const API_URL = 'http://localhost:8080/api/recipes';
-import axios from 'axios';
+import api from "./apiClient";
+const RECIPES_URL = "/recipes";
 
 // get all recetas
 export const getAllRecipes = async (page = 0, size = 10) => {
-  const response = await axios.get(`${API_URL}?page=${page}&size=${size}`);
-  return response.data; 
+  try {
+     const response = await api.get(`${RECIPES_URL}?page=${page}&size=${size}`);
+     return { success: true, data: response.data };
+  } catch (error) {
+    const errMsg =
+    error.response?.data?.message || "Ha ocurrido un error al cargar las recetas";
+    return { success: false, errMsg };
+  }
 };
 
 // get receta by id
 export const getRecipeById = async (id) => {
-  const response = await axios.get(`${API_URL}/${id}`);
-  return response.data;
+  try {
+    const response = await api.get(`${RECIPES_URL}/${id}`);   
+    return { success: true, data: response.data };
+  } catch (error) {
+    const errMsg =
+    error.response?.data?.message || "Receta no encontrada";
+    return { success: false, errMsg };
+  }
 };
 
 // get receta by title
 export const getRecipeByTitle = async (title) => {
-  const response = await axios.get(`${API_URL}/title/${title}`);
-  return response.data;
+  try {
+    const response = await api.get(`${RECIPES_URL}/title/${title}`);
+    return { success: true, data: response.data };
+  } catch (error) {
+    const errMsg =
+    error.response?.data?.message || "Receta no encontrada con ese titulo";
+  return { success: false, errMsg };
+  }
 };
 
-// add receta
-export const createRecipe = async (recipeData, token) => {
-  const response = await axios.post(API_URL, recipeData, {
-    headers: {
-      'Authorization': `Bearer ${token}`
-    }
-  });
-  return response.data;
+// add receta - > autorizacion token
+export const createRecipe = async (recipeData) => {
+  try {
+    const response = await api.post(RECIPES_URL, recipeData);
+    return { success: true, data: response.data };
+  } catch (error) {
+    const errMsg =
+      error.response?.data?.message || "Error al crear la  receta";
+    return { success: false, errMsg };
+  }
 };
 
-//update
-export const updateRecipe = async (recipeId, recipeData, token) => {
-  const response = await axios.put(`${API_URL}/${recipeId}`, recipeData, {
-    headers: {
-      'Authorization': `Bearer ${token}`
-    }
-  });
-  return response.data;
+//update - > autorizacion token
+export const updateRecipe = async (recipeId, recipeData) => {
+  try {
+    const response = await api.put(`${RECIPES_URL}/${recipeId}`, recipeData);
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.log(error);
+    const errMsg =
+      error.response?.data?.message || "Error al modificar receta";
+    return { success: false, errMsg };
+  }
 };
 
-
-//delete
-export const deleteRecipe = async (id, token) => {
-  const response = await axios.delete(`${API_URL}/${id}`, {
-    headers: {
-      'Authorization': `Bearer ${token}`
-    }
-  });
-  return response.data;
+//delete - > autorizacion token
+export const deleteRecipe = async (id) => {
+  try {
+    const response = await api.delete(`${RECIPES_URL}/${id}`);
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.log(error);
+    const errMsg = error.response?.data?.error || "Error al eliminar receta";
+    return { success: false, errMsg };
+  }
 };

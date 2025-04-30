@@ -16,15 +16,18 @@ export const FavoriteProvider = ({ children }) => {
     }
   }, [user]);
 
-
   const getFavorites = async () => {
     try {
       setLoading(true);
-      const data = await favoriteService.getUserFavorites(token);
-      setFavorites(data.map(fav => fav.recipe)); //extraigo las recetas de cada favorito
+      const result = await favoriteService.getUserFavorites();
+      if(!result.success){
+        setError("No se pudieron obtener los favoritos.");
+      }
+      const data=result.data;
+      setFavorites(data.map((fav) => fav.recipe)); //extraigo las recetas de cada favorito
     } catch (err) {
       console.error(err);
-      setError("No se pudieron obtener los favoritos.");
+      setError("Ocurrió un error inesperado al obtener los favoritos.")
     } finally {
       setLoading(false);
     }
@@ -32,34 +35,42 @@ export const FavoriteProvider = ({ children }) => {
 
   const addFavorite = async (recipeId) => {
     try {
-      const newFav = await favoriteService.addFavorite(recipeId, token);
-      setFavorites((prev) => [...prev, newFav.recipe]);
+      const result = await favoriteService.addFavorite(recipeId);
+      if (!result.success) {
+        setError(result.errMsg); 
+        return;
+      }
+      const newRecipe = result.data.recipe;
+      setFavorites((prev) => [...prev, newRecipe]);
     } catch (err) {
-      console.error(err);
+      throw err;
     }
   };
 
+  
   const removeFavorite = async (recipeId) => {
-    console.log("vamos a desmarcar favoritos");
     try {
-      await favoriteService.removeFavorite(recipeId, token);
-      setFavorites((prev) => prev.filter((recipe) => recipe.id !== recipeId));
+      const result = await favoriteService.removeFavorite(recipeId);
+      if (!result.success) {
+        setError(result.errMsg);
+        return;
+      }
+      setFavorites((prev) => prev.filter((fav) => fav.id !== recipeId));
     } catch (err) {
       console.error(err);
+      throw err;
     }
   };
 
   const checkIfFavorite = async (recipeId) => {
     try {
-      const response = await favoriteService.isFavorite(recipeId, token);
+      const response = await favoriteService.isFavorite(recipeId);
       return response;
     } catch (err) {
       console.error(err);
       return false;
     }
   };
-
-
 
   return (
     <FavoriteContext.Provider

@@ -11,7 +11,6 @@ const EditRecipe = () => {
     const [recipe, setRecipe] = useState(null);
     const [loading, setLoading] = useState(true); // loading local
     const [error, setError] = useState(null);     // error local
-    const { user, token } = useAuth();
     const { fetchRecipeById, updateRecipe } = useRecipes();
     const navigate = useNavigate();
 
@@ -23,6 +22,7 @@ const EditRecipe = () => {
                 setRecipe(data);
                 setError(null);
             } catch (err) {
+                toast.error(err);
                 setError(err.message || "Error al cargar la receta");
             } finally {
                 setLoading(false);
@@ -34,13 +34,11 @@ const EditRecipe = () => {
 
     const handleUpdate = async (updatedRecipe) => {
         try {
-            await updateRecipe(recipeId, updatedRecipe, token);
+            await updateRecipe(recipeId, updatedRecipe);
             toast.success("Receta actualizada con éxito!");
             navigate(`/recipes/${recipeId}`);
         } catch (err) {
-            const errorMessage = err.response?.data?.message || err.message || "Error desconocido al actualizar receta";
-            toast.error(errorMessage);
-            console.error("Error al actualizar la receta:", err);
+            toast.error(err);
         }
     };
 

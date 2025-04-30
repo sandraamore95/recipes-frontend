@@ -5,13 +5,13 @@ import { Outlet } from "react-router-dom";
 
 function Layout() {
   return (
-    <>
-      <Navbar />
-      <main className="mt-5">
-        <Outlet />
-      </main>
-      <Footer />
-    </>
+    <div className="d-flex flex-column min-vh-100"> 
+    <Navbar />
+    <main className="mt-5 flex-grow-1"> 
+      <Outlet />
+    </main>
+    <Footer />
+  </div>
   );
 }
 
