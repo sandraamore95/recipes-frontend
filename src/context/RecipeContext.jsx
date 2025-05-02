@@ -16,21 +16,30 @@ export const RecipesProvider = ({ children }) => {
 
   // Obtener todas las recetas
   const fetchRecipes = async () => {
-    setLoading(true); 
+    setLoading(true);
     setError(null);
     try {
       const result = await recipeService.getAllRecipes(0, 20);
+  
       if (!result.success) {
         throw new Error(result.errMsg);
       }
-      console.log(result.data.content);
-      setRecipes(result.data.content);
+  
+      const recipeList = result.data.content;
+      console.log(result.data);
+      setRecipes(recipeList);
+  
+      if (recipeList.length === 0) {
+        setError("No se encontraron recetas.");
+      }
+  
     } catch (err) {
-      setError(err.message); 
+      setError(err.message);
     } finally {
       setLoading(false);
     }
   };
+  
 
   // Obtener receta por Id
   const fetchRecipeById = async (id) => {

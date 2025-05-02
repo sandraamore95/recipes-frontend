@@ -5,6 +5,7 @@ const RECIPES_URL = "/recipes";
 export const getAllRecipes = async (page = 0, size = 10) => {
   try {
      const response = await api.get(`${RECIPES_URL}?page=${page}&size=${size}`);
+     console.log(response.data);
      return { success: true, data: response.data };
   } catch (error) {
     const errMsg =

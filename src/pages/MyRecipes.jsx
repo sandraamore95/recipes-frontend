@@ -7,13 +7,13 @@ import { Spinner } from 'react-bootstrap';
 
 function MyRecipes() {
   const { user } = useAuth();
-  const { recipes, loading, error } = useRecipes();
-  const [myRecipes, setmyRecipes] = useState([]);
+  const { recipes, loading} = useRecipes();
+  const [myRecipes, setMyRecipes] = useState([]);
 
   useEffect(() => {
-    if (user && recipes.length > 0) {
+    if (user && recipes) {
       const filteredRecipes = recipes.filter(recipe => recipe.userId === user.id);
-      setmyRecipes(filteredRecipes);
+      setMyRecipes(filteredRecipes);
     }
   }, [user, recipes]);
 
@@ -24,10 +24,6 @@ function MyRecipes() {
         <p className="ms-2">Cargando...</p>
       </div>
     );
-  }
-
-  if (error) {
-    return <p>Error: {error}</p>;
   }
 
   return (
@@ -43,6 +39,7 @@ function MyRecipes() {
       ) : (
         <div className="text-center">
           <p className="lead">No tienes recetas guardadas o creadas.</p>
+          <p className="text-muted">¡Comienza creando tu primera receta!</p>
         </div>
       )}
     </div>
