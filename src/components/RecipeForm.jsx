@@ -9,7 +9,8 @@ const RecipeForm = ({ initialData = {}, onSubmit }) => {
             name: ing.name,
             unit: ing.unit_measure,
             quantity: ing.quantity,
-            categories:ing.categories
+            categories:ing.categories,
+            imageUrl: ing.imageUrl
         })) || []
     );
 

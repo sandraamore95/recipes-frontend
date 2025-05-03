@@ -10,11 +10,10 @@ const IngredientSelector = ({ onAddIngredient, selectedIngredients }) => {
 
     useEffect(() => {
         if (debouncedSearchTerm !== lastSearchTerm.current) {
-            console.log(debouncedSearchTerm);
-            searchIngredients(debouncedSearchTerm); //http://localhost:8080/api/ingredients?name=${search}
+            searchIngredients(debouncedSearchTerm);
             lastSearchTerm.current = debouncedSearchTerm;
         }
-    }, [debouncedSearchTerm]); // cuando cambia el termino , se llama de nuevo al backend
+    }, [debouncedSearchTerm]);
 
     // Efecto solo para debuggear
     useEffect(() => {
@@ -27,11 +26,22 @@ const IngredientSelector = ({ onAddIngredient, selectedIngredients }) => {
             onAddIngredient({
                 id: ingredient.id,
                 name: ingredient.name,
-                unit: ingredient.unit || "unidades",
-                quantity: 1
+                unit: ingredient.unit_measure || "unidades",
+                quantity: 1,
+                imageUrl: ingredient.imageUrl
             });
             setSearchTerm("");
         }
+    };
+
+    const getImageUrl = (imageUrl) => {
+        if (!imageUrl) {
+            return "/default-ingredient.png";
+        }
+        if (imageUrl.startsWith('/')) {
+            return `http://localhost:8080${imageUrl}`;
+        }
+        return imageUrl;
     };
 
     return (
@@ -53,17 +63,75 @@ const IngredientSelector = ({ onAddIngredient, selectedIngredients }) => {
                         ingredients.map((ingredient) => (
                             <div
                                 key={ingredient.id}
-                                className="p-2 hover-bg-light d-flex justify-content-between align-items-center"
+                                className="p-2 hover-bg-light d-flex align-items-center"
                                 onClick={() => handleAdd(ingredient)}
-                                style={{ cursor: "pointer" }}
+                                style={{ 
+                                    cursor: "pointer",
+                                    transition: "background-color 0.2s"
+                                }}
                             >
-                                <span>{ingredient.name}</span>
-                                <span className="text-muted">({ingredient.unit})</span>
+                                <div className="d-flex align-items-center w-100">
+                                    <img
+                                        src={getImageUrl(ingredient.imageUrl)}
+                                        alt={ingredient.name}
+                                        className="rounded me-3"
+                                        style={{
+                                            width: '40px',
+                                            height: '40px',
+                                            objectFit: 'cover'
+                                        }}
+                                        onError={(e) => {
+                                            e.target.src = "/default-ingredient.png";
+                                        }}
+                                    />
+                                    <div className="flex-grow-1">
+                                        <div className="d-flex justify-content-between align-items-center">
+                                            <span className="fw-medium">{ingredient.name}</span>
+                                            <span className="text-muted small">({ingredient.unit_measure})</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         ))
                     ) : (
                         <p className="p-2 text-muted">No se encontraron ingredientes</p>
                     )}
+                </div>
+            )}
+
+            {selectedIngredients.length > 0 && (
+                <div className="mt-3">
+                    <h6>Ingredientes seleccionados:</h6>
+                    <div className="list-group">
+                        {selectedIngredients.map((ingredient) => (
+                            <div 
+                                key={ingredient.id} 
+                                className="list-group-item d-flex align-items-center"
+                            >
+                                <img
+                                    src={getImageUrl(ingredient.imageUrl)}
+                                    alt={ingredient.name}
+                                    className="rounded me-3"
+                                    style={{
+                                        width: '40px',
+                                        height: '40px',
+                                        objectFit: 'cover'
+                                    }}
+                                    onError={(e) => {
+                                        e.target.src = "/default-ingredient.png";
+                                    }}
+                                />
+                                <div className="flex-grow-1">
+                                    <div className="d-flex justify-content-between align-items-center">
+                                        <span>{ingredient.name}</span>
+                                        <span className="badge bg-primary rounded-pill">
+                                            {ingredient.quantity} {ingredient.unit}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
                 </div>
             )}
         </div>

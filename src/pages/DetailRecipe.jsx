@@ -223,13 +223,24 @@ const DetailRecipe = () => {
               <div className="mb-4">
                 <h5 className="text-muted mb-2">Ingredientes</h5>
                 <ul className="list-group">
-                  {recipe.ingredients?.length > 0 ? (
+                {recipe.ingredients?.length > 0 ? (
                     recipe.ingredients.map((ing, i) => (
                       <li
                         key={i}
                         className="list-group-item d-flex justify-content-between align-items-center"
                       >
-                        <span>{ing.name || `Ingrediente ${i + 1}`}</span>
+                        <div className="d-flex align-items-center gap-2">
+                          <img
+                            src={ing.imageUrl ? `http://localhost:8080${ing.imageUrl}` : "https://via.placeholder.com/40"}
+                            alt={ing.name || `Ingrediente ${i + 1}`}
+                            className="rounded"
+                            style={{ width: "40px", height: "40px", objectFit: "cover" }}
+                            onError={(e) => {
+                              e.target.src = "https://via.placeholder.com/40";
+                            }}
+                          />
+                          <span>{ing.name || `Ingrediente ${i + 1}`}</span>
+                        </div>
                         <span className="badge bg-primary rounded-pill">
                           {ing.quantity}
                         </span>
