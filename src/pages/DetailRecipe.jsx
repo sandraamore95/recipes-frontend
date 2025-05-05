@@ -26,6 +26,7 @@ const DetailRecipe = () => {
   const { checkIfFavorite, addFavorite, removeFavorite } = useFavorites();
   const [isFavorite, setIsFavorite] = useState(false); // Estado para los favoritos
 
+
   useEffect(() => {
     const loadRecipe = async () => {
       setLoading(true);
@@ -68,6 +69,19 @@ const DetailRecipe = () => {
     }
   };
 
+  
+  const getRecipeImageUrl = (imageUrl) => {
+    if (!imageUrl) {
+      return "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8MXx8fGVufDB8fHx8&w=1000&q=80";
+    }
+    if (imageUrl.startsWith('/')) {
+      return `http://localhost:8080${imageUrl}`;
+    }
+    return imageUrl;
+  };
+
+
+
   if (loading)
     return (
       <div className="d-flex justify-content-center mt-5">
@@ -95,189 +109,162 @@ const DetailRecipe = () => {
   if (!recipe) return null;
 
   return (
-    <div className="container my-4">
-      <div className="card shadow-lg overflow-hidden">
-        <div className="row g-0">
-          {/* Sección de imagen */}
-          <div className="col-lg-5">
-            <div className="position-relative h-100">
+    <div className="container-fluid px-0">
+      {/* Imagen Principal */}
+      <div className="container mt-4">
+        <div className="row">
+          <div className="col-12">
+            <div className="position-relative rounded-4 overflow-hidden" style={{ height: '400px' }}>
               <img
-                src={
-                  recipe.image ||
-                  "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8MXx8fGVufDB8fHx8&w=1000&q=80"
-                }
+                src={getRecipeImageUrl(recipe.imageUrl)}
                 alt={recipe.title}
-                className="img-fluid h-100 w-100 object-cover"
+                className="w-100 h-100 object-fit-cover"
                 onError={(e) => {
-                  e.target.src =
-                    "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8MXx8fGVufDB8fHx8&w=1000&q=80";
+                  e.target.src = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8MXx8fGVufDB8fHx8&w=1000&q=80";
                 }}
               />
-
-              {/* Iconos de acciones diferentes segun autentificacion  */}
+              {/* Botones de acción */}
               <div className="position-absolute top-0 start-0 m-3 d-flex gap-2">
-                {/* Mostrar favoritos SOLO si no es el dueño */}
                 {!myRecipe && (
                   <div className="d-flex gap-2">
-                    {/* Usuario no autenticado */}
-                    {!user && (
+                    {!user ? (
                       <button
                         className="btn btn-sm btn-outline-primary"
-                        onClick={() =>
-                          navigate("/login", {
-                            state: { from: `/recipes/${recipe.id}` },
-                          })
-                        }
-                        title="Inicia sesión para interactuar"
+                        onClick={() => navigate("/login", {
+                          state: { from: `/recipes/${recipe.id}` },
+                        })}
                       >
                         <FaSignInAlt className="me-1" />
-                        <span className="d-none d-sm-inline">
-                          Inicia sesión
-                        </span>
-                      </button>
-                    )}
-
-                    {/* Mostrar icono de favorito basado en isFavorite */}
-                    {isFavorite ? (
-                      <button
-                        onClick={toggleFavorite}
-                        className="btn btn-sm btn-outline-danger"
-                      >
-                        <FaHeart className="me-1" />
-                        <span className="d-none d-sm-inline">
-                          Eliminar de favoritos
-                        </span>
+                        <span className="d-none d-sm-inline">Inicia sesión</span>
                       </button>
                     ) : (
                       <button
                         onClick={toggleFavorite}
-                        className="btn btn-sm btn-outline-primary"
+                        className={`btn btn-sm ${isFavorite ? 'btn-danger' : 'btn-outline-primary'}`}
                       >
-                        <FaRegHeart className="me-1" />
-                        <span className="d-none d-sm-inline">
-                          Agregar a favoritos
+                        {isFavorite ? <FaHeart /> : <FaRegHeart />}
+                        <span className="d-none d-sm-inline ms-1">
+                          {isFavorite ? 'Eliminar' : 'Favorito'}
                         </span>
                       </button>
                     )}
                   </div>
                 )}
               </div>
-              <div className="position-absolute top-0 end-0 m-2">
-                <span className={`badge ${getStatus(recipe.status)}`}>
-                  {recipe.status}
-                </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Contenido Principal */}
+      <div className="container py-4">
+        <div className="row g-4">
+          {/* Columna Principal */}
+          <div className="col-lg-8">
+            {/* Título y Categorías */}
+            <div className="mb-4">
+              <h1 className="display-5 fw-bold mb-3">{recipe.title}</h1>
+              <div className="d-flex flex-wrap gap-2 mb-3">
+                {recipe.categories?.map((cat, i) => (
+                  <span key={i} className="badge bg-primary">
+                    {cat}
+                  </span>
+                ))}
+              </div>
+              <div className="d-flex align-items-center gap-3 text-muted">
+                {recipe.preparationTime && (
+                  <span>
+                    <i className="fas fa-clock me-2"></i>
+                    {recipe.preparationTime} minutos
+                  </span>
+                )}
+                {recipe.userId && (
+                  <span>
+                    <i className="fas fa-user me-2"></i>
+                    Usuario #{recipe.userId}
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Descripción */}
+            <div className="card border-0 shadow-sm mb-4">
+              <div className="card-body p-4">
+                <h2 className="h4 mb-3 text-primary">Descripción</h2>
+                <p className="lead mb-0">{recipe.description}</p>
+              </div>
+            </div>
+
+            {/* Preparación */}
+            <div className="card border-0 shadow-sm">
+              <div className="card-body p-4">
+                <h2 className="h4 mb-4 text-primary">Preparación</h2>
+                <div className="preparation-steps">
+                {recipe.preparation
+                    .split('\n')
+                    .filter(step => step.trim() !== '') 
+                    .map((step, index) => (
+                      <div key={index} className="d-flex mb-4">
+                        <div className="flex-shrink-0">
+                          <span className="badge bg-primary rounded-circle p-2 me-3">{index + 1}</span>
+                        </div>
+                        <p className="mb-0">{step}</p>
+                      </div>
+                    ))}
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Sección de contenido */}
-          <div className="col-lg-7">
-            <div className="card-body p-4">
-              <h1 className="card-title fw-bold mb-3 text-primary">
-                {recipe.title}
-              </h1>
-
-              <div className="mb-4">
-                <h5 className="text-muted mb-2">Descripción</h5>
-                <p className="card-text">{recipe.description}</p>
-              </div>
-
-              <div className="mb-4">
-                <h5 className="text-muted mb-2">Preparación</h5>
-                <div className="bg-light p-3 rounded">
-                  {recipe.preparation.split("\n").map((step, i) => (
-                    <p key={i} className="mb-2">
-                      <strong className="text-primary">Paso {i + 1}:</strong>{" "}
-                      {step}
-                    </p>
+          {/* Sidebar - Ingredientes */}
+          <div className="col-lg-4">
+            <div className="card border-0 shadow-sm sticky-top" style={{ top: '2rem' }}>
+              <div className="card-body p-4">
+                <h2 className="h4 mb-4 text-primary">Ingredientes</h2>
+                <div className="ingredients-list">
+                  {recipe.ingredients?.map((ing, i) => (
+                    <div key={i} className="d-flex align-items-center mb-3">
+                      <img
+                        src={ing.imageUrl ? `http://localhost:8080${ing.imageUrl}` : "/default_ingredient.png"}
+                        alt={ing.name}
+                        className="rounded-circle me-3"
+                        style={{ width: '50px', height: '50px', objectFit: 'cover' }}
+                        onError={(e) => {
+                          e.target.src = "/default_ingredient.png";
+                        }}
+                      />
+                      <div className="flex-grow-1">
+                        <h3 className="h6 mb-0">{ing.name}</h3>
+                        <div className="d-flex align-items-center">
+                          <span className="badge bg-primary me-2">{ing.quantity}</span>
+                          <small className="text-muted text-capitalize">
+                            {ing.unit_measure === 'unit' ? 'unidad' : 
+                             ing.unit_measure === 'gram' ? 'gramos' :
+                             ing.unit_measure === 'liter' ? 'litros' :
+                             ing.unit_measure === 'ml' ? 'mililitros' :
+                             ing.unit_measure === 'kg' ? 'kilogramos' :
+                             ing.unit_measure === 'tbsp' ? 'cucharadas' :
+                             ing.unit_measure === 'tsp' ? 'cucharaditas' :
+                             ing.unit_measure === 'cup' ? 'tazas' :
+                             ing.unit_measure === 'oz' ? 'onzas' :
+                             ing.unit_measure === 'lb' ? 'libras' :
+                             ing.unit_measure || "unidad"}
+                          </small>
+                        </div>
+                      </div>
+                    </div>
                   ))}
                 </div>
-              </div>
 
-              <div className="row">
-                <div className="col-md-6 mb-3">
-                  <h5 className="text-muted mb-2">Categorías</h5>
-                  <div className="d-flex flex-wrap gap-2">
-                    {recipe.categories?.length > 0 ? (
-                      recipe.categories.map((cat, i) => (
-                        <span key={i} className="badge bg-secondary">
-                          {cat}
-                        </span>
-                      ))
-                    ) : (
-                      <span className="text-muted">Sin categorías</span>
-                    )}
-                  </div>
-                </div>
-
-                <div className="col-md-6 mb-3">
-                  <h5 className="text-muted mb-2">Tiempo de preparación</h5>
-                  <p>
-                    {recipe.preparationTime
-                      ? `${recipe.preparationTime} minutos`
-                      : "No especificado"}
-                  </p>
-                </div>
-              </div>
-
-              <div className="mb-4">
-                <h5 className="text-muted mb-2">Ingredientes</h5>
-                <ul className="list-group">
-                {recipe.ingredients?.length > 0 ? (
-                    recipe.ingredients.map((ing, i) => (
-                      <li
-                        key={i}
-                        className="list-group-item d-flex justify-content-between align-items-center"
-                      >
-                        <div className="d-flex align-items-center gap-3">
-                          <div className="ingredient-image-container">
-                            <img
-                              src={ing.imageUrl ? `http://localhost:8080${ing.imageUrl}` : "/default_ingredient.png"}
-                              alt={ing.name || `Ingrediente ${i + 1}`}
-                              className="rounded shadow-sm"
-                              style={{ 
-                                width: "50px", 
-                                height: "50px", 
-                                objectFit: "cover",
-                                border: "2px solid #e9ecef"
-                              }}
-                              onError={(e) => {
-                                e.target.src = "/default_ingredient.png";
-                              }}
-                            />
-                          </div>
-                          <div className="d-flex flex-column">
-                            <span className="fw-bold">{ing.name || `Ingrediente ${i + 1}`}</span>
-                            <span className="text-muted small">{ ing.unit_measure || "unidad"}</span>
-                          </div>
-                        </div>
-                        <span className="badge bg-primary rounded-pill px-3 py-2">
-                          {ing.quantity}
-                        </span>
-                      </li>
-                    ))
-                  ) : (
-                    <li className="list-group-item text-muted">
-                      No hay ingredientes
-                    </li>
-                  )}
-                </ul>
-              </div>
-
-              <div className="d-flex justify-content-between align-items-center mt-4">
-                <button
-                  className="btn btn-outline-primary"
-                  onClick={() => navigate(-1)}
-                >
-                  ← Volver atrás
-                </button>
-
-                <div className="d-flex gap-2">
-                  {recipe.userId && (
-                    <span className="text-muted align-self-center">
-                      Creado por: Usuario #{recipe.userId}
-                    </span>
-                  )}
+                {/* Botón de Volver */}
+                <div className="d-grid gap-2 mt-4">
+                  <button
+                    onClick={() => navigate(-1)}
+                    className="btn btn-outline-primary"
+                  >
+                    <i className="fas fa-arrow-left me-2"></i>
+                    Volver atrás
+                  </button>
                 </div>
               </div>
             </div>

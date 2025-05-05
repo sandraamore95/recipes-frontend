@@ -15,6 +15,18 @@ const RecipeCard = ({ recipe, viewType }) => {
     console.log("estamos en el componente de recipecard");
     }, []);
 
+    const getRecipeImageUrl = (imageUrl) => {
+      if (!imageUrl) {
+        return 'https://blogs.oximesa.es/wp-content/uploads/2017/11/Postres-deliciosos-y-saludables.jpg';
+      }
+      if (imageUrl.startsWith('/')) {
+        return `http://localhost:8080${imageUrl}`;
+      }
+      return imageUrl;
+    };
+
+
+
   const getActions = () => {
     switch (viewType) {
       case 'my-recipes':
@@ -91,11 +103,14 @@ const RecipeCard = ({ recipe, viewType }) => {
         style={{ cursor: 'pointer' }}
       >
         <div className="ratio ratio-16x9 position-relative">
-          <img
-            src={recipe.image || 'https://blogs.oximesa.es/wp-content/uploads/2017/11/Postres-deliciosos-y-saludables.jpg'}
+        <img
+            src={getRecipeImageUrl(recipe.imageUrl)}
             alt={recipe.title}
             className="card-img-top object-fit-cover"
             style={{ objectFit: 'cover' }}
+            onError={(e) => {
+              e.target.src = 'https://blogs.oximesa.es/wp-content/uploads/2017/11/Postres-deliciosos-y-saludables.jpg';
+            }}
           />
 
           {getActions()}

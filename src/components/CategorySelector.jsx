@@ -22,7 +22,7 @@ const CategorySelector = ({ selectedCategories, onChange }) => {
             });
     }, []);
 
-      const handleCategoryChange = (categoryName) => {
+      const handleSelectedCategory = (categoryName) => {
         let updated;
         if (selectedCategories.includes(categoryName)) {
             updated = selectedCategories.filter(
