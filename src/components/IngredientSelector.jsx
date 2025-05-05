@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useDebounce } from "use-debounce";
 import { useIngredients } from "../context/IngredientContext";
 
-const IngredientSelector = ({ onAddIngredient, selectedIngredients }) => {
+const IngredientSelector = ({ onAddIngredient, selectedIngredients, onRemoveIngredient, onIncrementQuantity, onDecrementQuantity }) => {
     const { ingredients, searchIngredients, loading } = useIngredients();
     const [searchTerm, setSearchTerm] = useState("");
     const [debouncedSearchTerm] = useDebounce(searchTerm, 500);
@@ -36,7 +36,7 @@ const IngredientSelector = ({ onAddIngredient, selectedIngredients }) => {
 
     const getImageUrl = (imageUrl) => {
         if (!imageUrl) {
-            return "/default-ingredient.png";
+            return "/default_ingredient.png";
         }
         if (imageUrl.startsWith('/')) {
             return `http://localhost:8080${imageUrl}`;
@@ -106,28 +106,51 @@ const IngredientSelector = ({ onAddIngredient, selectedIngredients }) => {
                         {selectedIngredients.map((ingredient) => (
                             <div 
                                 key={ingredient.id} 
-                                className="list-group-item d-flex align-items-center"
+                                className="list-group-item d-flex align-items-center justify-content-between"
                             >
-                                <img
-                                    src={getImageUrl(ingredient.imageUrl)}
-                                    alt={ingredient.name}
-                                    className="rounded me-3"
-                                    style={{
-                                        width: '40px',
-                                        height: '40px',
-                                        objectFit: 'cover'
-                                    }}
-                                    onError={(e) => {
-                                        e.target.src = "/default-ingredient.png";
-                                    }}
-                                />
-                                <div className="flex-grow-1">
-                                    <div className="d-flex justify-content-between align-items-center">
-                                        <span>{ingredient.name}</span>
-                                        <span className="badge bg-primary rounded-pill">
+                                <div className="d-flex align-items-center gap-3">
+                                    <img
+                                        src={getImageUrl(ingredient.imageUrl)}
+                                        alt={ingredient.name}
+                                        className="rounded shadow-sm ingredient-image"
+                                        style={{
+                                            width: '40px',
+                                            height: '40px',
+                                            objectFit: 'cover'
+                                        }}
+                                        onError={(e) => {
+                                            e.target.src = "/default_ingredient.png";
+                                        }}
+                                    />
+                                    <div>
+                                        <h6 className="mb-0 fw-bold text-primary">{ingredient.name}</h6>
+                                        <small className="text-muted">
                                             {ingredient.quantity} {ingredient.unit}
-                                        </span>
+                                        </small>
                                     </div>
+                                </div>
+                                <div className="d-flex gap-2">
+                                    <button
+                                        type="button"
+                                        className="btn btn-sm btn-outline-danger btn-circle"
+                                        onClick={() => onDecrementQuantity(ingredient)}
+                                    >
+                                        -
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="btn btn-sm btn-outline-success btn-circle"
+                                        onClick={() => onIncrementQuantity(ingredient)}
+                                    >
+                                        +
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="btn btn-sm btn-outline-danger"
+                                        onClick={() => onRemoveIngredient(ingredient.id)}
+                                    >
+                                        x
+                                    </button>
                                 </div>
                             </div>
                         ))}

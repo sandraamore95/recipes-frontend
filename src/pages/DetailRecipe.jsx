@@ -229,19 +229,29 @@ const DetailRecipe = () => {
                         key={i}
                         className="list-group-item d-flex justify-content-between align-items-center"
                       >
-                        <div className="d-flex align-items-center gap-2">
-                          <img
-                            src={ing.imageUrl ? `http://localhost:8080${ing.imageUrl}` : "https://via.placeholder.com/40"}
-                            alt={ing.name || `Ingrediente ${i + 1}`}
-                            className="rounded"
-                            style={{ width: "40px", height: "40px", objectFit: "cover" }}
-                            onError={(e) => {
-                              e.target.src = "https://via.placeholder.com/40";
-                            }}
-                          />
-                          <span>{ing.name || `Ingrediente ${i + 1}`}</span>
+                        <div className="d-flex align-items-center gap-3">
+                          <div className="ingredient-image-container">
+                            <img
+                              src={ing.imageUrl ? `http://localhost:8080${ing.imageUrl}` : "/default_ingredient.png"}
+                              alt={ing.name || `Ingrediente ${i + 1}`}
+                              className="rounded shadow-sm"
+                              style={{ 
+                                width: "50px", 
+                                height: "50px", 
+                                objectFit: "cover",
+                                border: "2px solid #e9ecef"
+                              }}
+                              onError={(e) => {
+                                e.target.src = "/default_ingredient.png";
+                              }}
+                            />
+                          </div>
+                          <div className="d-flex flex-column">
+                            <span className="fw-bold">{ing.name || `Ingrediente ${i + 1}`}</span>
+                            <span className="text-muted small">{ ing.unit_measure || "unidad"}</span>
+                          </div>
                         </div>
-                        <span className="badge bg-primary rounded-pill">
+                        <span className="badge bg-primary rounded-pill px-3 py-2">
                           {ing.quantity}
                         </span>
                       </li>
