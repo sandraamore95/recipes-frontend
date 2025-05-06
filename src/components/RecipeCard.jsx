@@ -5,27 +5,25 @@ import { toast } from 'react-toastify';
 import { useRecipes } from '../context/RecipeContext';
 import { useFavorites } from '../context/FavoriteContext';
 
-const RecipeCard = ({ recipe, viewType }) => {
+const RecipeCard = ({ recipe, viewType = 'catalog' }) => {
   const navigate = useNavigate();
   const { removeFavorite } = useFavorites();
   const { deleteRecipe, loading, error } = useRecipes();
 
-  
+
   useEffect(() => {
     console.log("estamos en el componente de recipecard");
-    }, []);
+  }, []);
 
-    const getRecipeImageUrl = (imageUrl) => {
-      if (!imageUrl) {
-        return 'https://blogs.oximesa.es/wp-content/uploads/2017/11/Postres-deliciosos-y-saludables.jpg';
-      }
-      if (imageUrl.startsWith('/')) {
-        return `http://localhost:8080${imageUrl}`;
-      }
-      return imageUrl;
-    };
-
-
+  const getRecipeImageUrl = (imageUrl) => {
+    if (!imageUrl) {
+      return '/recipe_default.jpg';
+    }
+    if (imageUrl.startsWith('/')) {
+      return `http://localhost:8080${imageUrl}`;
+    }
+    return imageUrl;
+  };
 
   const getActions = () => {
     switch (viewType) {
@@ -102,20 +100,26 @@ const RecipeCard = ({ recipe, viewType }) => {
         className="card h-100 shadow-sm border-0 recipe-card"
         style={{ cursor: 'pointer' }}
       >
-        <div className="ratio ratio-16x9 position-relative">
-        <img
+        <div className="ratio ratio-16x9 position-relative  overflow-hidden">
+          <img
             src={getRecipeImageUrl(recipe.imageUrl)}
             alt={recipe.title}
-            className="card-img-top object-fit-cover"
-            style={{ objectFit: 'cover' }}
+            className="w-100 h-100 object-fit-cover"
             onError={(e) => {
-              e.target.src = 'https://blogs.oximesa.es/wp-content/uploads/2017/11/Postres-deliciosos-y-saludables.jpg';
+              e.target.src = "/recipe_default.jpg";
             }}
           />
 
-          {getActions()}
+          {!recipe.imageUrl && (
+            <div className="position-absolute top-50 start-50  translate-middle text-white text-center bg-dark bg-opacity-50 p-3 d-flex align-items-center" >
+              <h4 className=" ">{recipe.title}</h4>
+            </div>
+          )}
+
+          {getActions ()}
         </div>
-        
+
+
 
         <div className="card-body d-flex flex-column">
           <h5 className="card-title fw-bold text-primary">{recipe.title}</h5>

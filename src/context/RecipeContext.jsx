@@ -52,12 +52,22 @@ export const RecipesProvider = ({ children }) => {
   };
 
   // Crear receta
-  const addRecipe = async (recipeData) => {
+  const addRecipe = async (recipeData,imageFile) => {
     setLoading(true);
     try {
       const result = await recipeService.createRecipe(recipeData);
       if (!result.success) {
         throw new Error(result.errMsg);
+      }
+
+      const recipeId = result.data.id;
+      if (imageFile) {
+        const uploadResult = await recipeService.uploadRecipeImage(recipeId, imageFile);
+        if (!uploadResult.success) {
+          throw new Error(uploadResult.errMsg || "Error al cargar la imagen");
+        }
+      }else{
+        console.log("No se ha subido ninguna imagen");
       }
       await fetchRecipes(); // Recargar recetas
       return result.data;
@@ -68,20 +78,29 @@ export const RecipesProvider = ({ children }) => {
     }
   };
 
+
   // Editar receta
-  const updateRecipe = async (recipeId, recipeData) => {
+  const updateRecipe = async (recipeId, recipeData,imageFile) => {
     setLoading(true);
     try {
       const result = await recipeService.updateRecipe(recipeId, recipeData);
       if (!result.success) {
         throw new Error(result.errMsg);
       }
+      if (imageFile) {
+        const uploadResult = await recipeService.uploadRecipeImage(recipeId, imageFile);
+        if (!uploadResult.success) {
+          throw new Error(uploadResult.errMsg || "Error al cargar la imagen");
+        }
+      }
+
       const updatedRecipe = result.data;
       setRecipes((prevRecipes) =>
         prevRecipes.map((recipe) =>
           recipe.id === parseInt(recipeId) ? updatedRecipe : recipe
         )
       );
+      await fetchRecipes(); 
       return updatedRecipe;
     } catch (err) {
       throw err.message;
@@ -109,6 +128,29 @@ export const RecipesProvider = ({ children }) => {
     }
   };
 
+  // Update imagen
+  const uploadRecipeImage = async (recipeId,imageFile) => {
+    setLoading(true);
+    try {
+      const result = await recipeService.uploadRecipeImage(recipeId, imageFile);
+      if (!result.success) {
+        throw new Error(result.errMsg);
+      }
+      const updatedRecipe = result.data;
+      setRecipes((prevRecipes) =>
+        prevRecipes.map((recipe) =>
+          recipe.id === parseInt(recipeId) ? updatedRecipe : recipe
+        )
+      );
+      return updatedRecipe;
+    } catch (err) {
+      throw err.message;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
   const value = {
     recipes,
     loading,
@@ -118,6 +160,7 @@ export const RecipesProvider = ({ children }) => {
     deleteRecipe,
     updateRecipe,
     fetchRecipeById,
+    uploadRecipeImage
   };
 
   return (

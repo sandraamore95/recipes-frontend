@@ -32,9 +32,9 @@ const EditRecipe = () => {
         loadRecipe();
     }, [recipeId]);
 
-    const handleUpdate = async (updatedRecipe) => {
+    const handleUpdate = async (updatedRecipe,imageFile) => {
         try {
-            await updateRecipe(recipeId, updatedRecipe);
+            await updateRecipe(recipeId, updatedRecipe, imageFile);
             toast.success("Receta actualizada con éxito!");
             navigate(`/recipes/${recipeId}`);
         } catch (err) {

@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import IngredientSelector from "./IngredientSelector";
 import CategorySelector from "./CategorySelector";
+import { useRecipes } from "../context/RecipeContext";
 import "../styles/RecipeForm.css";
 
 const RecipeForm = ({ initialData = {}, onSubmit }) => {
+    const { uploadRecipeImage } = useRecipes();
     const [selectedIngredients, setSelectedIngredients] = useState(
         initialData.ingredients?.map(ing => ({
             id: ing.ingredientId,
@@ -20,6 +22,47 @@ const RecipeForm = ({ initialData = {}, onSubmit }) => {
         preparation: initialData.preparation || "",
         categories: initialData.categories || []
     });
+
+    const [imageFile, setImageFile] = useState(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [previewUrl, setPreviewUrl] = useState(initialData.imageUrl || null);
+
+    // Efectos
+    useEffect(() => {
+        if (imageFile) {
+            const objectUrl = URL.createObjectURL(imageFile);
+            setPreviewUrl(objectUrl);
+
+            return () => URL.revokeObjectURL(objectUrl);
+        }
+    }, [imageFile]);
+
+
+    const handleImageChange = (e) => {
+        if (e.target.files && e.target.files[0]) {
+            setImageFile(e.target.files[0]);
+        }
+    };
+
+    const handleRemoveImage = () => {
+        setImageFile(null);
+        setPreviewUrl(null);
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        const newRecipe = {
+          ...formData,
+          ingredients: selectedIngredients.map(({ id, name, quantity }) => ({
+            ingredientId: id,
+            name,
+            quantity
+          }))
+        };
+      
+        onSubmit(newRecipe, imageFile);
+      };
+
 
     const getRecipeImageUrl = (imageUrl) => {
         if (!imageUrl) {
@@ -75,58 +118,46 @@ const RecipeForm = ({ initialData = {}, onSubmit }) => {
         );
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        const newRecipe = {
-            ...formData,
-            ingredients: selectedIngredients.map(({ id, name, quantity }) => ({
-                ingredientId: id,
-                name: name,
-                quantity
-            }))
-        };
-        console.log("Final Recipe Object:", newRecipe);
-        onSubmit(newRecipe);
-    };
-
     useEffect(() => {
         console.log(initialData);
     }, []);
 
     return (
         <form onSubmit={handleSubmit} className="container-fluid px-0">
-            {/* Imagen Principal */}
+            {/* Sección de Imagen */}
             <div className="container mt-4">
                 <div className="row">
                     <div className="col-12">
                         <div className="position-relative rounded-4 overflow-hidden" style={{ height: '400px' }}>
-                            {initialData.id ? (
-                                <img
-                                    src={getRecipeImageUrl(initialData.imageUrl)}
-                                    alt="Receta"
-                                    className="w-100 h-100 object-fit-cover"
-                                    onError={(e) => {
-                                        e.target.src = "https://imagenes.diariodenavarra.es/files/image_477_265/uploads/2021/06/09/60c1082d8e912.jpeg";
-                                    }}
-                                />
-                            ) : (
-                                <div 
-                                    className="w-100 h-100 bg-light d-flex align-items-center justify-content-center"
-                                    style={{ backgroundColor: '#f8f9fa' }}
+                            <img
+                                src={getRecipeImageUrl(initialData.imageUrl)}
+                                alt="Receta"
+                                className="w-100 h-100 object-fit-cover"
+                                onError={(e) => {
+                                    e.target.src = "https://imagenes.diariodenavarra.es/files/image_477_265/uploads/2021/06/09/60c1082d8e912.jpeg";
+                                }}
+                            />
+
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) => setImageFile(e.target.files[0])}
+                                className="d-none"
+                                id="imageInput"
+                            />
+
+                            <div className="position-absolute bottom-0 end-0 m-4 d-flex gap-2">
+
+                                <button
+                                    type="button"
+                                    className="btn btn-primary position-absolute bottom-0 end-0 m-4"
+                                    onClick={() => document.getElementById("imageInput").click()}
                                 >
-                                    <div className="text-center">
-                                        <i className="fas fa-camera fa-4x text-muted mb-3"></i>
-                                        <p className="text-muted h4">Haz clic para subir una imagen</p>
-                                    </div>
-                                </div>
-                            )}
-                            <button 
-                                type="button" 
-                                className="btn btn-primary position-absolute bottom-0 end-0 m-4"
-                            >
-                                <i className="fas fa-camera me-2"></i>
-                                Cambiar Imagen
-                            </button>
+                                    <i className="fas fa-camera me-2"></i>
+                                    Cambiar Imagen
+                                </button>
+
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -138,7 +169,7 @@ const RecipeForm = ({ initialData = {}, onSubmit }) => {
                     <div className="col-lg-8">
                         {/* Título */}
                         <div className="mb-4">
-                            <label htmlFor="title" className="form-label fw-bold text-primary h3 mb-3">Título de la Receta</label>
+                            <label htmlFor="title" className="form-label fw-medium text-primary">Título de la Receta</label>
                             <input
                                 type="text"
                                 value={formData.title}
@@ -154,7 +185,7 @@ const RecipeForm = ({ initialData = {}, onSubmit }) => {
                         {/* Descripción */}
                         <div className="card border-0 shadow-sm mb-4">
                             <div className="card-body p-4">
-                                <h2 className="h5 mb-3 text-muted">Descripción</h2>
+                                <h2 className="h4 mb-3 text-primary">Descripción</h2>
                                 <textarea
                                     value={formData.description}
                                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
@@ -170,7 +201,7 @@ const RecipeForm = ({ initialData = {}, onSubmit }) => {
                         {/* Categorías */}
                         <div className="card border-0 shadow-sm mb-4">
                             <div className="card-body p-4">
-                                <h2 className="h5 mb-3 text-muted">Categorías</h2>
+                                <h2 className="h4 mb-3 text-primary">Categorías</h2>
                                 <CategorySelector
                                     selectedCategories={formData.categories}
                                     onChange={(updatedCategories) =>
@@ -183,7 +214,7 @@ const RecipeForm = ({ initialData = {}, onSubmit }) => {
                         {/* Preparación */}
                         <div className="card border-0 shadow-sm">
                             <div className="card-body p-4">
-                                <h2 className="h5 mb-3 text-muted">Preparación</h2>
+                                <h2 className="h4 mb-3 text-primary">Preparación</h2>
                                 <textarea
                                     value={formData.preparation}
                                     onChange={(e) => setFormData({ ...formData, preparation: e.target.value })}
@@ -203,7 +234,7 @@ const RecipeForm = ({ initialData = {}, onSubmit }) => {
                         <div className="card border-0 shadow-sm sticky-top" style={{ top: '2rem' }}>
                             <div className="card-body p-4">
                                 <h2 className="h4 mb-4 text-primary">Ingredientes</h2>
-                                
+
                                 {/* Selector de Ingredientes */}
                                 <div className="mb-4">
                                     <IngredientSelector
@@ -216,11 +247,19 @@ const RecipeForm = ({ initialData = {}, onSubmit }) => {
                                 </div>
 
                                 {/* Botón de Enviar */}
-                                <button 
-                                    type="submit" 
-                                    className="btn btn-primary btn-lg w-100 shadow-sm"
+                                <button
+                                    type="submit"
+                                    className="btn btn-primary btn-lg w-100 mt-4"
+                                    disabled={isSubmitting}
                                 >
-                                    {initialData.id ? 'Actualizar Receta' : 'Crear Receta'}
+                                    {isSubmitting ? (
+                                        <>
+                                            <span className="spinner-border spinner-border-sm me-2"></span>
+                                            Procesando...
+                                        </>
+                                    ) : (
+                                        initialData.id ? 'Actualizar Receta' : 'Crear Receta'
+                                    )}
                                 </button>
                             </div>
                         </div>

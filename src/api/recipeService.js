@@ -74,3 +74,27 @@ export const deleteRecipe = async (id) => {
     return { success: false, errMsg };
   }
 };
+
+// upload recipe image -> autorizacion + multipart/form-data
+export const uploadRecipeImage = async (recipeId, imageFile) => {
+  try {
+    const formData = new FormData();
+    formData.append("image", imageFile);
+
+    const response = await api.patch(
+      `/recipes/${recipeId}/upload-image`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.log(error);
+    const errMsg =
+      error.response?.data?.message || "Error al subir la imagen";
+    return { success: false, errMsg };
+  }
+};

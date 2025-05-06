@@ -69,7 +69,7 @@ const DetailRecipe = () => {
     }
   };
 
-  
+
   const getRecipeImageUrl = (imageUrl) => {
     if (!imageUrl) {
       return "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8MXx8fGVufDB8fHx8&w=1000&q=80";
@@ -120,9 +120,14 @@ const DetailRecipe = () => {
                 alt={recipe.title}
                 className="w-100 h-100 object-fit-cover"
                 onError={(e) => {
-                  e.target.src = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8MXx8fGVufDB8fHx8&w=1000&q=80";
+                  e.target.src = "/recipe_default.jpg";
                 }}
               />
+              {!recipe.imageUrl && (
+                <div className="position-absolute top-50 start-50 translate-middle text-white text-center bg-dark bg-opacity-50 p-3 rounded-4">
+                  <h2 className="display-6">{recipe.title}</h2>
+                </div>
+              )}
               {/* Botones de acción */}
               <div className="position-absolute top-0 start-0 m-3 d-flex gap-2">
                 {!myRecipe && (
@@ -200,9 +205,9 @@ const DetailRecipe = () => {
               <div className="card-body p-4">
                 <h2 className="h4 mb-4 text-primary">Preparación</h2>
                 <div className="preparation-steps">
-                {recipe.preparation
+                  {recipe.preparation
                     .split('\n')
-                    .filter(step => step.trim() !== '') 
+                    .filter(step => step.trim() !== '')
                     .map((step, index) => (
                       <div key={index} className="d-flex mb-4">
                         <div className="flex-shrink-0">
@@ -238,17 +243,17 @@ const DetailRecipe = () => {
                         <div className="d-flex align-items-center">
                           <span className="badge bg-primary me-2">{ing.quantity}</span>
                           <small className="text-muted text-capitalize">
-                            {ing.unit_measure === 'unit' ? 'unidad' : 
-                             ing.unit_measure === 'gram' ? 'gramos' :
-                             ing.unit_measure === 'liter' ? 'litros' :
-                             ing.unit_measure === 'ml' ? 'mililitros' :
-                             ing.unit_measure === 'kg' ? 'kilogramos' :
-                             ing.unit_measure === 'tbsp' ? 'cucharadas' :
-                             ing.unit_measure === 'tsp' ? 'cucharaditas' :
-                             ing.unit_measure === 'cup' ? 'tazas' :
-                             ing.unit_measure === 'oz' ? 'onzas' :
-                             ing.unit_measure === 'lb' ? 'libras' :
-                             ing.unit_measure || "unidad"}
+                            {ing.unit_measure === 'unit' ? 'unidad' :
+                              ing.unit_measure === 'gram' ? 'gramos' :
+                                ing.unit_measure === 'liter' ? 'litros' :
+                                  ing.unit_measure === 'ml' ? 'mililitros' :
+                                    ing.unit_measure === 'kg' ? 'kilogramos' :
+                                      ing.unit_measure === 'tbsp' ? 'cucharadas' :
+                                        ing.unit_measure === 'tsp' ? 'cucharaditas' :
+                                          ing.unit_measure === 'cup' ? 'tazas' :
+                                            ing.unit_measure === 'oz' ? 'onzas' :
+                                              ing.unit_measure === 'lb' ? 'libras' :
+                                                ing.unit_measure || "unidad"}
                           </small>
                         </div>
                       </div>

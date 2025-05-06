@@ -12,10 +12,10 @@ function CreateRecipe() {
   const navigate = useNavigate();
   const { addRecipe, loading } = useRecipes();
 
-  const handleAdd = async (newRecipe) => {
+  const handleAdd = async (newRecipe, imageFile) => {
     console.log("Añadiendo receta de prueba...");
     try {
-      const createdRecipe = await addRecipe(newRecipe);
+      const createdRecipe = await addRecipe(newRecipe, imageFile);
       console.log("Receta creada con éxito:", createdRecipe);
       toast.success("¡Receta creada con éxito!", {});
       navigate("/");
@@ -23,7 +23,6 @@ function CreateRecipe() {
       toast.error(err);
     }
   };
-
   return (
     <div className="container mt-4">
       <h2>Crear Nueva Receta 🥘</h2>
