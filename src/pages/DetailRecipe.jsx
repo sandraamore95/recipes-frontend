@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Spinner, Alert } from "react-bootstrap";
 import { useRecipes } from "../context/RecipeContext";
 import { useAuth } from "../context/AuthContext";
+import { useRecipeImage } from "../hooks/useRecipeImage";
 import {
   FaHeart,
   FaRegHeart,
@@ -25,8 +26,9 @@ const DetailRecipe = () => {
   const myRecipe = user && recipe && user.id === recipe.userId;
   const { checkIfFavorite, addFavorite, removeFavorite } = useFavorites();
   const [isFavorite, setIsFavorite] = useState(false); // Estado para los favoritos
+  const { src, handleError } = useRecipeImage(recipe?.imageUrl ?? null);
 
-
+  //  CARGA LA RECETA/ID
   useEffect(() => {
     const loadRecipe = async () => {
       setLoading(true);
@@ -43,7 +45,8 @@ const DetailRecipe = () => {
     loadRecipe();
   }, [recipeId, fetchRecipeById]);
 
-  // Verificar si la receta está en favoritos
+
+  // CARGA SI ESTA EN FAVORITOS O NO
   useEffect(() => {
     const checkFavoriteStatus = async () => {
       if (recipeId && user) {
@@ -53,6 +56,7 @@ const DetailRecipe = () => {
     };
     checkFavoriteStatus();
   }, [recipeId, user, checkIfFavorite]);
+
 
   const toggleFavorite = async () => {
     if (!user) {
@@ -68,19 +72,6 @@ const DetailRecipe = () => {
       setIsFavorite(true);
     }
   };
-
-
-  const getRecipeImageUrl = (imageUrl) => {
-    if (!imageUrl) {
-      return "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8MXx8fGVufDB8fHx8&w=1000&q=80";
-    }
-    if (imageUrl.startsWith('/')) {
-      return `http://localhost:8080${imageUrl}`;
-    }
-    return imageUrl;
-  };
-
-
 
   if (loading)
     return (
@@ -116,12 +107,10 @@ const DetailRecipe = () => {
           <div className="col-12">
             <div className="position-relative rounded-4 overflow-hidden" style={{ height: '400px' }}>
               <img
-                src={getRecipeImageUrl(recipe.imageUrl)}
+                src={src}
                 alt={recipe.title}
                 className="w-100 h-100 object-fit-cover"
-                onError={(e) => {
-                  e.target.src = "/recipe_default.jpg";
-                }}
+                onError={handleError}
               />
               {!recipe.imageUrl && (
                 <div className="position-absolute top-50 start-50 translate-middle text-white text-center bg-dark bg-opacity-50 p-3 rounded-4">

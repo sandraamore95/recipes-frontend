@@ -38,6 +38,7 @@ export const router = createBrowserRouter([
         </RecipesProvider>
         <ToastContainer
           position="top-left"
+          style={{ width: '300px' }}
           autoClose={2000}
           hideProgressBar={false}
           draggable

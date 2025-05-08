@@ -1,18 +1,17 @@
 import React, { useState, useEffect, useRef } from "react";
 import IngredientSelector from "./IngredientSelector";
 import CategorySelector from "./CategorySelector";
-import { useRecipes } from "../context/RecipeContext";
 import "../styles/RecipeForm.css";
 
 const RecipeForm = ({ initialData = {}, onSubmit }) => {
-    const { uploadRecipeImage } = useRecipes();
     const [selectedIngredients, setSelectedIngredients] = useState(
         initialData.ingredients?.map(ing => ({
             id: ing.ingredientId,
             name: ing.name,
             unit: ing.unit_measure,
             quantity: ing.quantity,
-            imageUrl: ing.imageUrl
+            imageUrl: ing.imageUrl,
+            categories:ing.categories
         })) || []
     );
 
@@ -20,6 +19,7 @@ const RecipeForm = ({ initialData = {}, onSubmit }) => {
         title: initialData.title || "",
         description: initialData.description || "",
         preparation: initialData.preparation || "",
+        imageUrl:initialData.imageUrl | "",
         categories: initialData.categories || []
     });
 

@@ -57,8 +57,10 @@ export const RecipesProvider = ({ children }) => {
     try {
       const result = await recipeService.createRecipe(recipeData);
       if (!result.success) {
+        console.log(result);
         throw new Error(result.errMsg);
       }
+      console.log(result);
 
       const recipeId = result.data.id;
       if (imageFile) {
@@ -128,27 +130,7 @@ export const RecipesProvider = ({ children }) => {
     }
   };
 
-  // Update imagen
-  const uploadRecipeImage = async (recipeId,imageFile) => {
-    setLoading(true);
-    try {
-      const result = await recipeService.uploadRecipeImage(recipeId, imageFile);
-      if (!result.success) {
-        throw new Error(result.errMsg);
-      }
-      const updatedRecipe = result.data;
-      setRecipes((prevRecipes) =>
-        prevRecipes.map((recipe) =>
-          recipe.id === parseInt(recipeId) ? updatedRecipe : recipe
-        )
-      );
-      return updatedRecipe;
-    } catch (err) {
-      throw err.message;
-    } finally {
-      setLoading(false);
-    }
-  };
+ 
 
 
   const value = {
@@ -159,8 +141,7 @@ export const RecipesProvider = ({ children }) => {
     addRecipe,
     deleteRecipe,
     updateRecipe,
-    fetchRecipeById,
-    uploadRecipeImage
+    fetchRecipeById
   };
 
   return (

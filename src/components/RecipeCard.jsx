@@ -4,12 +4,13 @@ import { FaEdit, FaTrash, FaHeartBroken, FaBookOpen } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import { useRecipes } from '../context/RecipeContext';
 import { useFavorites } from '../context/FavoriteContext';
+import { useRecipeImage } from "../hooks/useRecipeImage";
 
 const RecipeCard = ({ recipe, viewType = 'catalog' }) => {
   const navigate = useNavigate();
   const { removeFavorite } = useFavorites();
   const { deleteRecipe, loading, error } = useRecipes();
-
+   const { src, handleError } = useRecipeImage(recipe?.imageUrl ?? null);
 
   useEffect(() => {
     console.log("estamos en el componente de recipecard");
@@ -101,14 +102,12 @@ const RecipeCard = ({ recipe, viewType = 'catalog' }) => {
         style={{ cursor: 'pointer' }}
       >
         <div className="ratio ratio-16x9 position-relative  overflow-hidden">
-          <img
-            src={getRecipeImageUrl(recipe.imageUrl)}
-            alt={recipe.title}
-            className="w-100 h-100 object-fit-cover"
-            onError={(e) => {
-              e.target.src = "/recipe_default.jpg";
-            }}
-          />
+        <img
+                src={src}
+                alt={recipe.title}
+                className="w-100 h-100 object-fit-cover"
+                onError={handleError}
+              />
 
           {!recipe.imageUrl && (
             <div className="position-absolute top-50 start-50  translate-middle text-white text-center bg-dark bg-opacity-50 p-3 d-flex align-items-center" >

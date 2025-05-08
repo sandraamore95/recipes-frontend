@@ -82,7 +82,7 @@ const Register = () => {
             onChange={handleChange}
             placeholder="Introduce tu contraseña"
             required
-            maxLength={6}
+            maxLength={8}
           />
         </div>
 
