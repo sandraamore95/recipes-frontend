@@ -17,7 +17,9 @@ function CreateRecipe() {
     try {
       const createdRecipe = await addRecipe(newRecipe, imageFile);
       console.log("Receta creada con éxito:", createdRecipe);
-      toast.success("¡Receta creada con éxito!", {});
+      toast.success("¡Receta creada con éxito!", {}); console.log(imageFile);
+     if(imageFile==null){
+      toast.info("Puedes subir una foto a la receta en cualquier momento.");}
       navigate("/");
     } catch (err) {
       toast.error(err);
