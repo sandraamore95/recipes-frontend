@@ -2,77 +2,67 @@ import React, { useState, useEffect, useRef } from "react";
 import IngredientSelector from "./IngredientSelector";
 import CategorySelector from "./CategorySelector";
 import "../styles/RecipeForm.css";
+import { useRecipeImage } from "../hooks/useRecipeImage";
 
 const RecipeForm = ({ initialData = {}, onSubmit }) => {
+
+    const { src, handleError } = useRecipeImage(initialData?.imageUrl ?? null);
+    const [imageFile, setImageFile] = useState(null);
+    const [previewUrl, setPreviewUrl] = useState(src);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const fileInputRef = useRef();
+
+    // Obtenemos los ingredientes iniciales de la receta
     const [selectedIngredients, setSelectedIngredients] = useState(
         initialData.ingredients?.map(ing => ({
             id: ing.ingredientId,
             name: ing.name,
             unit: ing.unit_measure,
             quantity: ing.quantity,
-            imageUrl: ing.imageUrl,
-            categories:ing.categories
+            imageUrl: ing.imageUrl
         })) || []
     );
 
+    // Inicializamos el estado del formulario con los datos iniciales
     const [formData, setFormData] = useState({
         title: initialData.title || "",
         description: initialData.description || "",
         preparation: initialData.preparation || "",
-        imageUrl:initialData.imageUrl | "",
+        imageUrl: initialData.imageUrl | "",
         categories: initialData.categories || []
     });
 
-    const [imageFile, setImageFile] = useState(null);
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [previewUrl, setPreviewUrl] = useState(initialData.imageUrl || null);
-
-    // Efectos
-    useEffect(() => {
-        if (imageFile) {
-            const objectUrl = URL.createObjectURL(imageFile);
-            setPreviewUrl(objectUrl);
-
-            return () => URL.revokeObjectURL(objectUrl);
-        }
-    }, [imageFile]);
 
 
-    const handleImageChange = (e) => {
-        if (e.target.files && e.target.files[0]) {
-            setImageFile(e.target.files[0]);
+    const handleImageChange = (event) => {
+        if (event.target.files && event.target.files.length > 0) {
+            const file = event.target.files[0];
+            setImageFile(file);
+            const url = URL.createObjectURL(file);
+            setPreviewUrl(url);
         }
     };
 
-    const handleRemoveImage = () => {
-        setImageFile(null);
-        setPreviewUrl(null);
+    const clickImage = () => {
+        fileInputRef.current.click(); // simula el click en el input oculto
     };
+
 
     const handleSubmit = (e) => {
         e.preventDefault();
         const newRecipe = {
-          ...formData,
-          ingredients: selectedIngredients.map(({ id, name, quantity }) => ({
-            ingredientId: id,
-            name,
-            quantity
-          }))
+            ...formData,
+            ingredients: selectedIngredients.map(({ id, name, quantity }) => ({
+                ingredientId: id,
+                name,
+                quantity
+            }))
         };
-      
+
         onSubmit(newRecipe, imageFile);
-      };
-
-
-    const getRecipeImageUrl = (imageUrl) => {
-        if (!imageUrl) {
-            return "https://imagenes.diariodenavarra.es/files/image_477_265/uploads/2021/06/09/60c1082d8e912.jpeg";
-        }
-        if (imageUrl.startsWith('/')) {
-            return `http://localhost:8080${imageUrl}`;
-        }
-        return imageUrl;
     };
+
+
 
     const handleAddIngredient = (newIngredient) => {
         setSelectedIngredients((prev) => {
@@ -88,7 +78,6 @@ const RecipeForm = ({ initialData = {}, onSubmit }) => {
                 return [...prev, newIngredient];
             }
         });
-        console.log();
     };
 
     // eliminamos de nuestra coleccion de ingredientes , el ingrediente seleccionado
@@ -129,35 +118,47 @@ const RecipeForm = ({ initialData = {}, onSubmit }) => {
                 <div className="row">
                     <div className="col-12">
                         <div className="position-relative rounded-4 overflow-hidden" style={{ height: '400px' }}>
-                            <img
-                                src={getRecipeImageUrl(initialData.imageUrl)}
-                                alt="Receta"
-                                className="w-100 h-100 object-fit-cover"
-                                onError={(e) => {
-                                    e.target.src = "https://imagenes.diariodenavarra.es/files/image_477_265/uploads/2021/06/09/60c1082d8e912.jpeg";
-                                }}
-                            />
 
                             <input
                                 type="file"
                                 accept="image/*"
-                                onChange={(e) => setImageFile(e.target.files[0])}
-                                className="d-none"
-                                id="imageInput"
+                                onChange={handleImageChange}
+                                ref={fileInputRef}
+                                style={{ display: 'none' }}
                             />
 
-                            <div className="position-absolute bottom-0 end-0 m-4 d-flex gap-2">
+                            <img
+                                src={previewUrl}
+                                alt={formData.title}
+                                className="w-100 h-100 object-fit-cover"
+                                onError={handleError}
+                            />
 
+                            {/* Titulo en la imagen por defecto */}
+                            {!initialData.imageUrl && (
+                                <div
+                                    className="position-absolute top-0 start-0 w-100 text-center text-white fw-bold"
+                                    style={{
+                                        background: "rgba(0, 0, 0, 0.5)",
+                                        padding: "0.5rem",
+                                        fontSize: "1.5rem"
+                                    }}
+                                >
+                                    {formData.title}
+                                </div>
+                            )}
+
+                            
+                            <div className="position-absolute bottom-0 end-0 m-4">
                                 <button
                                     type="button"
-                                    className="btn btn-primary position-absolute bottom-0 end-0 m-4"
-                                    onClick={() => document.getElementById("imageInput").click()}
+                                    className="btn btn-primary"
+                                    onClick={clickImage}
                                 >
-                                    <i className="fas fa-camera me-2"></i>
                                     Cambiar Imagen
                                 </button>
-
                             </div>
+                            
                         </div>
                     </div>
                 </div>
