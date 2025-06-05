@@ -1,12 +1,79 @@
-# React + Vite
+# 🍳 Recetas App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Una aplicación web moderna para compartir, descubrir y gestionar recetas de cocina.
 
-Currently, two official plugins are available:
+## 🚀 Características
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- 📱 Interfaz de usuario moderna y responsive
+- 🔍 Búsqueda de recetas por título e ingredientes
+- 📸 Subida y gestión de imágenes de recetas
+- ⭐ Sistema de favoritos
+- 👤 Autenticación de usuarios
+- 📝 Creación y edición de recetas
+- 🏷️ Gestión de ingredientes
 
-## Expanding the ESLint configuration
+## 🛠️ Tecnologías Utilizadas
 
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- React.js
+- Vite
+- Context API para gestión de estado
+- Custom Hooks para lógica reutilizable
+- Axios para peticiones HTTP
+- CSS moderno para estilos
+
+## 📦 Instalación
+
+1. Clona el repositorio:
+```bash
+git clone https://github.com/sandraamore95/recipes-frontend.git
+```
+
+2. Instala las dependencias:
+```bash
+npm install
+```
+
+3. Inicia el servidor de desarrollo:
+```bash
+npm run dev
+```
+
+## 🏗️ Estructura del Proyecto
+
+```
+src/
+├── api/            # Servicios de API y configuración
+├── assets/         # Recursos estáticos
+├── components/     # Componentes reutilizables
+├── context/        # Contextos de React
+├── hooks/          # Custom hooks
+├── pages/          # Páginas de la aplicación
+├── routes/         # Configuración de rutas
+└── styles/         # Estilos globales
+```
+
+## 🔑 Características Principales
+
+### Gestión de Recetas
+- Creación de nuevas recetas
+- Edición de recetas existentes
+- Visualización detallada de recetas
+- Sistema de búsqueda avanzada
+
+### Sistema de Usuarios
+- Registro y login
+- Perfiles de usuario
+- Gestión de recetas favoritas
+
+### Gestión de Imágenes
+- Subida de imágenes para recetas
+- Vista previa de imágenes
+- Imágenes por defecto
+
+
+
+## 👥 Autores
+
+- Sandra Amorós Reyes
+
+
