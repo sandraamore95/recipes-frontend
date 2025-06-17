@@ -12,7 +12,7 @@ export const IngredientsProvider = ({ children }) => {
     const searchIngredients = async (search = '') => {
         setLoading(true);
         try {
-            const response = await axios.get(`http://localhost:8080/api/ingredients?name=${search}`);
+            const response = await axios.get(`https://recetasyummy.duckdns.org/api/ingredients?name=${search}`);
             setIngredients(response.data);
         } catch (error) {
             setError("Error obteniendo los  ingredientes:", error)
