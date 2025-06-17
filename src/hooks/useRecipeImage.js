@@ -5,7 +5,7 @@ const DEFAULT_IMAGE = "/recipe_default.jpg";
 export const useRecipeImage = (initialUrl) => {
     const getImageUrl = (url) => {
       if (!url) return "/recipe_default.jpg";
-      if (url.startsWith("/")) return `http://localhost:8080${url}`;
+      if (url.startsWith("/")) return `https://recetasyummy.duckdns.org${url}`;
       return url;
     };
   
