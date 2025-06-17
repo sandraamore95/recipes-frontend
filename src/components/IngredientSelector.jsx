@@ -39,7 +39,7 @@ const IngredientSelector = ({ onAddIngredient, selectedIngredients, onRemoveIngr
             return "/default_ingredient.png";
         }
         if (imageUrl.startsWith('/')) {
-            return `http://localhost:8080${imageUrl}`;
+            return `https://recetasyummy.duckdns.org${imageUrl}`;
         }
         return imageUrl;
     };
