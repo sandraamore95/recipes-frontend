@@ -219,7 +219,7 @@ const DetailRecipe = () => {
                   {recipe.ingredients?.map((ing, i) => (
                     <div key={i} className="d-flex align-items-center mb-3">
                       <img
-                        src={ing.imageUrl ? `http://localhost:8080${ing.imageUrl}` : "/default_ingredient.png"}
+                        src={ing.imageUrl ? `https://recetasyummy.duckdns.org${ing.imageUrl}` : "/default_ingredient.png"}
                         alt={ing.name}
                         className="rounded-circle me-3"
                         style={{ width: '50px', height: '50px', objectFit: 'cover' }}
