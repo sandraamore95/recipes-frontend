@@ -107,6 +107,14 @@ const RecipeForm = ({ initialData = {}, onSubmit }) => {
         );
     };
 
+    const handleUpdateQuantity = (id, newQuantity) => {
+  setSelectedIngredients(prev =>
+    prev.map(ing =>
+      ing.id === id ? { ...ing, quantity: isNaN(newQuantity) ? 1 : newQuantity } : ing
+    )
+  );
+};
+
     useEffect(() => {
         console.log(initialData);
     }, []);
@@ -244,6 +252,7 @@ const RecipeForm = ({ initialData = {}, onSubmit }) => {
                                         onRemoveIngredient={handleRemoveIngredient}
                                         onIncrementQuantity={handleIncrementQuantity}
                                         onDecrementQuantity={handleDecrementQuantity}
+                                        onUpdateQuantity={handleUpdateQuantity}
                                     />
                                 </div>
 
