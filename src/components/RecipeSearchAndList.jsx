@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import RecipeCard from "./RecipeCard";
 import * as categoryService from "../api/categoriesService";
+import { Spinner } from "react-bootstrap";
 
 const RecipeSearchAndList = ({ recipes, viewType }) => {
   const [searchTerm, setSearchTerm] = useState("");
