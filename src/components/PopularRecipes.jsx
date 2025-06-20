@@ -47,18 +47,11 @@ const PopularRecipes = () => {
         borderBottom: 'dotted rgb(143, 182, 255) 3px',
     };
 
-    if (loading) return <div className="d-flex justify-content-center"><Spinner animation="border" variant="primary" /></div>;
-    if (error) return <div>Error: {error}</div>;
-
-
-    if (popularRecipes.length === 0 && !loading && !error) {
+    if (loading || (recipes.length === 0)) {
         return (
-            <section className="my-5">
-                <h2 className="display-5 fw-bold mb-3">
-                    Recetas <span className="text-primary">Destacadas</span>
-                </h2>
-                <p>No hay recetas destacadas disponibles.</p>
-            </section>
+            <div className="d-flex justify-content-center my-5">
+                <Spinner animation="border" variant="primary" />
+            </div>
         );
     }
     return (

@@ -6,18 +6,14 @@ const RecipeCatalog = () => {
     const { recipes, loading, error } = useRecipes();
     
     
-    if (loading) {
-        return (
-          <div className="d-flex justify-content-center mt-3">
-            <Spinner animation="border" variant="primary" />
-            <p className="ms-2">Cargando...</p>
-          </div>
-        );
-      }
-    
-      if (error) {
-        return <p>Error: {error}</p>;
-      }
+ 
+       if (loading || (recipes.length === 0)) {
+              return (
+                  <div className="d-flex justify-content-center my-5">
+                      <Spinner animation="border" variant="primary" />
+                  </div>
+              );
+          }
     
       return <RecipeSearchAndList recipes={recipes} />;
     };

@@ -105,10 +105,11 @@ const RecipeSearchAndList = ({ recipes, viewType }) => {
         }}
       />
 
+
       {/* Listado de recetas */}
       <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
-        {visibleRecipes.length === 0 ? (
-          <p>No se encontraron recetas.</p>
+        {loading || visibleRecipes.length === 0 ? (
+          <Spinner animation="border" variant="primary" />
         ) : (
           visibleRecipes.map((recipe) => (
             <RecipeCard key={recipe.id} recipe={recipe} viewType={viewType} />
